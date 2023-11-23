@@ -9,7 +9,21 @@ use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-
+    public function index(Request $request)
+    {
+        $search  = $request->search ?? null;
+        $results = Comment::where('content', 'LIKE', '%' . $search . '%');
+        if ($request->post_id) {
+            $results = $results->where('post_id', $request->post_id);
+        }
+        if ($request->user_id) {
+            $results = $results->where('user_id', $request->user_id);
+        }
+        $results = $results
+            ->orderBy("created_at", "desc")
+            ->paginate($request->limit ?? 10);
+        return CommentResource::collection($results);
+    }
 
     public function store(Request $request)
     {
@@ -30,6 +44,30 @@ class CommentController extends Controller
         ]);
         return new CommentResource($data);
     }
+
+    public function edit(Request $request, $id)
+    {
+        $credentials = $request->validate([
+            "content" => "required",
+        ]);
+
+        $data = Comment::find($id);
+        if (!$data) {
+            return response()->json([
+                "message" => "Comment not found!"
+            ], 404);
+        }
+        if ($data->user_id != $request->user()?->id)
+            return response()->json([
+                "message" => "Comment not found!"
+            ], 404);
+
+        $data->update([
+            "content" => $request->content,
+        ]);
+        return new CommentResource($data);
+    }
+
 
 
     public function destroy(Request $request, $id)

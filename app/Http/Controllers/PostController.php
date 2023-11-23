@@ -15,8 +15,35 @@ class PostController extends Controller
     public function index(Request $request)
     {
         $search  = $request->search ?? null;
-        $results = Post::where('title', 'LIKE', '%' . $search . '%')->orderBy("created_at", "desc")
-            ->paginate(10);
+        $results = Post::where('title', 'LIKE', '%' . $search . '%')
+            ->orWhere('content', 'LIKE', '%' . $search . '%')
+            ->orWhere('tag', 'LIKE', '%' . $search . '%');
+
+        if ($request->tag) {
+            $results = $results->where('tag', $request->tag);
+        }
+        if ($request->status) {
+            $results = $results->where('status', $request->status);
+        }
+        if ($request->user_id) {
+            $results = $results->where('user_id', $request->user_id);
+        }
+        // if ($request->type == 'range') {
+        //     $results = $results->whereBetween('created_at', [$request->form, $request->to]);
+        // }
+        if ($request->date) {
+            $results = $results->whereDate('created_at', '=', $request->date);
+        }
+        if ($request->month) {
+            $results = $results->whereMonth('created_at', '=', $request->month);
+        }
+        if ($request->year) {
+            $results = $results->whereYear('created_at', $request->year);
+        }
+
+        $results = $results
+            ->orderBy("created_at", "desc")
+            ->paginate($request->limit ?? 10);
         return PostResource::collection($results);
     }
 
@@ -53,11 +80,26 @@ class PostController extends Controller
             "title" => "required",
             "content" => "required",
         ]);
+
         $img = null;
         // if ($request->picture) {
         //     $img = $this->uploadFile($request->picture, $request->user()?->username ?? "tester");
         // }
+
+
+
         $data = Post::find($id);
+        if (!$data) {
+            return response()->json([
+                "message" => "Post not found!"
+            ], 404);
+        }
+
+        if ($data->user_id != $request->user()?->id)
+            return response()->json([
+                "message" => "Post not found!"
+            ], 404);
+
         $data->update([
             "title" => $request->title,
             "content" => $request->content,
