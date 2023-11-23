@@ -18,6 +18,10 @@ return new class extends Migration
             $table->text("tag")->nullable();
             $table->integer("status")->nullable();
             $table->text("picture")->nullable();
+
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
             $table->timestamps();
             $table->softDeletes();
         });
