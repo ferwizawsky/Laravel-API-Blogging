@@ -2,64 +2,52 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CommentResource;
 use App\Models\Comment;
+use App\Models\Post;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $credentials = $request->validate([
+            "content" => "required",
+            "post_id" => "required",
+        ]);
+
+        if (!Post::find($request->post_id)) {
+            return response()->json([
+                "message" => "Post not found!"
+            ], 404);
+        }
+        $data = Comment::create([
+            "content" => $request->content,
+            "user_id" => $request->user()?->id ?? 0,
+            "post_id" => $request->post_id
+        ]);
+        return new CommentResource($data);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Comment $comment)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Comment $comment)
+    public function destroy(Request $request, $id)
     {
-        //
-    }
+        $data = Comment::find($id);
+        if (!$data) {
+            return response()->json([
+                "message" => "Comment not found!"
+            ], 404);
+        }
+        if ($request->user()?->role_id == 0 && $data->user_id != $request->user()?->id)
+            return response()->json([
+                "message" => "Comment not found!"
+            ], 404);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Comment $comment)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Comment $comment)
-    {
-        //
+        $data->delete();
+        return response()->json([
+            "message" => "Success delete Comment"
+        ]);
     }
 }

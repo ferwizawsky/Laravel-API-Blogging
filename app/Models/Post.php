@@ -14,12 +14,12 @@ class Post extends Model
     protected $guarded = [];
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, "id", "user_id");
+        return $this->belongsTo(User::class, "user_id", "id");
     }
 
     public function comments(): HasMany
     {
-        return $this->hasMany(Comment::class);
+        return $this->hasMany(Comment::class, "post_id", "id");
     }
 
     public function reactions(): HasMany
