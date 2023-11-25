@@ -2,64 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PostResource;
+use App\Models\Post;
 use App\Models\Reaction;
 use Illuminate\Http\Request;
 
 class ReactionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Reaction $reaction)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Reaction $reaction)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Reaction $reaction)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Reaction $reaction)
-    {
-        //
+        $credentials = $request->validate([
+            "post_id" => "required",
+        ]);
+        $tmp1 = Post::find($request->post_id);
+        if (!$tmp1) {
+            return response()->json([
+                "message" => "Post not found!"
+            ], 404);
+        }
+        $tmp = Reaction::where("post_id", $request->post_id)->where("user_id", $request->user()->id)->first();
+        if ($tmp) {
+            $tmp->update(["status" => $request->status]);
+        } else {
+            $reaction = Reaction::create([
+                "post_id" => $request->post_id,
+                "user_id" => $request->user()->id,
+                "status" => $request->status
+            ]);
+        }
+        $data = Post::find($request->post_id);
+        return new PostResource($data);
     }
 }

@@ -72,7 +72,16 @@ class PostController extends Controller
             "data" => $data
         ], 200);
     }
-
+    public function get($id)
+    {
+        $data = Post::find($id);
+        if (!$data) {
+            return response()->json([
+                "message" => "Post not found!"
+            ], 404);
+        }
+        return new PostResource($data);
+    }
     public function edit(Request $request, $id)
     {
         $credentials = $request->validate([

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ReactionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,6 +17,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/post/{id}',  'PostController@get');
+Route::get('/post',  'PostController@index');
 Route::post('/auth/register',  'AuthController@register');
 Route::post('/auth/login',  'AuthController@login');
 
@@ -26,8 +29,9 @@ Route::middleware("auth:sanctum")->group(function () {
     });
 
     Route::prefix('post')->controller(PostController::class)->group(function () {
-        Route::get('/', 'index');
+        // Route::get('/', 'index');
         Route::post('/', "store");
+        // Route::get('/{id}', "get");
         Route::post('/{id}', "edit");
         Route::delete('/{id}/delete', 'destroy');
     });
@@ -37,5 +41,10 @@ Route::middleware("auth:sanctum")->group(function () {
         Route::post('/', "store");
         Route::post('/{id}', "edit");
         Route::delete('/{id}/delete', 'destroy');
+    });
+
+
+    Route::prefix('reaction')->controller(ReactionController::class)->group(function () {
+        Route::post('/', "store");
     });
 });

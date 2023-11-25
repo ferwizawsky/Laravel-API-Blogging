@@ -22,6 +22,7 @@ class PostResource extends JsonResource
             "status" => $this->status,
             // "picture" => $this->picture,
             "comments" => CommentResource::collection($this->comments),
+            "reactions" => ReactionResource::collection($this->reactions),
             "publisher" => new UserResource($this->user),
             "created_at" => $this->created_at,
 
