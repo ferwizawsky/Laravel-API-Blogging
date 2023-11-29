@@ -35,10 +35,9 @@ onMounted(() => {
 <template>
     <div>
         <div
-            class="w-full bg-white/20 backdrop-blur-sm fixed top-0 left-0 min-h-[65px] flex items-center justify-center"
+            class="w-full bg-white/20 backdrop-blur-sm fixed top-0 z-10 left-0 min-h-[65px] flex items-center justify-between px-4 lg:px-8"
         >
             <div></div>
-
             <Menu as="div" class="relative inline-block text-left">
                 <div>
                     <MenuButton
@@ -78,7 +77,7 @@ onMounted(() => {
                 </transition>
             </Menu>
         </div>
-        <div class="pt-[65px] px-4 lg:px-8">
+        <div class="pt-[85px] px-4 lg:px-8 pb-20">
             <RouterView />
         </div>
     </div>

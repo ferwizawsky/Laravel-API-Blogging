@@ -1,8 +1,5 @@
 <script setup>
-const props = defineProps({
-    list: Array,
-    page: Number,
-});
+const props = defineProps(["list", "page"]);
 const emit = defineEmits(["move"]);
 </script>
 <template>

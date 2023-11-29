@@ -4,10 +4,12 @@ import { dateFormatter } from "@/composables/timeFormatter.js";
 import { ref, onMounted } from "vue";
 import { useNotif } from "@/stores/notif.js";
 import Paginate from "@/components/Paginate.vue";
+import { useRouter, useRoute } from "vue-router";
 
 const notif = useNotif();
 const search = ref("");
-const statView = ref(0);
+const route = useRoute();
+const router = useRouter();
 const input_search = ref();
 const limit = 10;
 const page = ref(1);
@@ -17,23 +19,44 @@ const meta = ref({
 });
 
 onMounted(() => {
+    if (route.query.page) page.value = route.query.page;
     getData();
 });
 
 async function getData() {
+    meta.value = { links: [] };
+    list.value = [];
+    notif.loading = true;
     try {
         const { data } = await useMyFetch(
             "GET",
             `/post?page=${page.value}&search=${search.value}&limit=${limit}`
         );
-        console.log(data);
-        list.value = data.data;
+        list.value = [...data.data];
         meta.value = data.meta;
-    } catch (error) {}
+    } catch (error) {
+    } finally {
+        notif.loading = false;
+    }
+}
+
+async function deleteData(e) {
+    let text = `Delete Data ${e.title} ?`;
+    if (confirm(text) == true) {
+        try {
+            const { data } = await useMyFetch("delete", `/post/${e.id}/delete`);
+            getData();
+            notif.make("Succed Delete Data");
+        } catch (e) {
+            // console.log(e);
+            notif.make("Failed Delete Data", { type: "danger" });
+        }
+    }
 }
 
 function setPage(index) {
     page.value = index.url.split("=")[1];
+    router.push(`/admin/post?page=${page.value}`);
     getData();
 }
 </script>
@@ -80,7 +103,12 @@ function setPage(index) {
             </div>
         </form>
         <div class="pt-2">
-            <button @click="addMenu(1, null)" class="btn">Add</button>
+            <button
+                @click="$router.push(`/admin/post-make?type=add`)"
+                class="btn"
+            >
+                Add
+            </button>
         </div>
     </div>
     <div
@@ -134,7 +162,11 @@ function setPage(index) {
                                         viewBox="0 0 24 24"
                                         stroke-width="1.5"
                                         stroke="currentColor"
-                                        @click="addMenu(3, index)"
+                                        @click="
+                                            $router.push(
+                                                `/admin/post/${index.id}`
+                                            )
+                                        "
                                         class="w-5 mr-2 text-primary cursor-pointer hover:text-primary/50 ease-in-out duration-200"
                                     >
                                         <path
@@ -148,7 +180,11 @@ function setPage(index) {
                                         xmlns="http://www.w3.org/2000/svg"
                                         fill="none"
                                         viewBox="0 0 24 24"
-                                        @click="addMenu(2, index)"
+                                        @click="
+                                            $router.push(
+                                                `/admin/post/${index.id}?type=edit`
+                                            )
+                                        "
                                         stroke-width="1.5"
                                         stroke="currentColor"
                                         class="w-5 mr-2 text-primary cursor-pointer hover:text-primary/50 ease-in-out duration-200"
@@ -194,6 +230,6 @@ function setPage(index) {
     @apply pb-2;
 }
 .table-body tr td {
-    @apply pt-3;
+    @apply pt-3 px-2;
 }
 </style>

@@ -37,6 +37,16 @@ const routes = [
                 name: "Post",
                 component: () => import("@/pages/admin/post/index.vue"),
             },
+            {
+                path: "post-make",
+                name: "Post Make",
+                component: () => import("@/pages/admin/post/id.vue"),
+            },
+            {
+                path: "post/:id",
+                name: "Post Detail",
+                component: () => import("@/pages/admin/post/id.vue"),
+            },
         ],
     },
 ];
