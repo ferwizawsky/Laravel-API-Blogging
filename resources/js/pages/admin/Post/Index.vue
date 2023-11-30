@@ -99,15 +99,43 @@ function setPage(index) {
                         />
                     </svg>
                 </span>
-                <button class="btn">Search</button>
+                <button class="btn-square">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-5 h-5"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                        />
+                    </svg>
+                </button>
             </div>
         </form>
         <div class="pt-2">
             <button
                 @click="$router.push(`/admin/post-make?type=add`)"
-                class="btn"
+                class="btn-square"
             >
-                Add
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="w-6 h-6"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 6v12m6-6H6"
+                    />
+                </svg>
             </button>
         </div>
     </div>
@@ -124,7 +152,7 @@ function setPage(index) {
                             <th>Content</th>
                             <th>Date</th>
                             <th>Time</th>
-                            <th>Aksi</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody class="table-body">

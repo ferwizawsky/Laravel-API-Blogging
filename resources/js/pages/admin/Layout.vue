@@ -41,7 +41,7 @@ onMounted(() => {
             <Menu as="div" class="relative inline-block text-left">
                 <div>
                     <MenuButton
-                        class="w-8 h-8 cursor-pointer bg-amber-400 flex items-center justify-center rounded-full text-white"
+                        class="w-8 h-8 cursor-pointer bg-secondary flex items-center justify-center rounded-full text-white"
                     >
                         {{ item?.name?.substring(0, 1) }}
                     </MenuButton>
