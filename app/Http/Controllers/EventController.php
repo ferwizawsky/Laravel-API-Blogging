@@ -11,11 +11,17 @@ class EventController extends Controller
     public function index(Request $request)
     {
         $search  = $request->search ?? null;
-        $results = Event::where('title', 'LIKE', '%' . $search . '%')
-            ->orWhere('description', 'LIKE', '%' . $search . '%');
+        $results = Event::where('title', 'LIKE', '%' . $search . '%');
         if ($request->user_id) {
             $results = $results->where('user_id', $request->user_id);
         }
+        if ($request->type == "past") {
+            $results = $results->whereDate('time', '<', today());
+        }
+        if ($request->type == "present") {
+            $results = $results->whereDate('time', '>=', today());
+        }
+
         // if ($request->type == 'range') {
         //     $results = $results->whereBetween('created_at', [$request->form, $request->to]);
         // }

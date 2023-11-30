@@ -21,7 +21,9 @@ class EventResource extends JsonResource
             "time" => $this->time,
             "location" => $this->location,
             "slot" => $this->slot,
-            "user_id" => new UserResource($this->user),
+            "booking" => count($this->booking),
+            "booking_user" => BookingUserResource::collection($this->booking),
+            "user" => new UserResource($this->user),
             "created_at" => $this->created_at,
         ];
     }

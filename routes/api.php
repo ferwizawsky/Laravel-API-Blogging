@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\PostController;
@@ -40,12 +41,19 @@ Route::middleware("auth:sanctum")->group(function () {
         Route::delete('/{id}/delete', 'destroy');
     });
 
-    Route::prefix('user')->controller(UserController::class)->group(function () {
+    Route::prefix('booking')->controller(BookingController::class)->group(function () {
         Route::get('/', 'index');
         Route::post('/', "store");
         Route::get('/{id}', "get");
-        Route::post('/{id}', "edit");
         Route::delete('/{id}/delete', 'destroy');
+    });
+
+    Route::prefix('user')->controller(UserController::class)->group(function () {
+        Route::get('/', 'index');
+        // Route::post('/', "store");
+        // Route::get('/{id}', "get");
+        // Route::post('/{id}', "edit");
+        // Route::delete('/{id}/delete', 'destroy');
     });
 
 
