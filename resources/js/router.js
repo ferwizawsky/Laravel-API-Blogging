@@ -12,8 +12,8 @@ const routes = [
     },
     {
         path: "/",
-        // name: "Landing",
-        component: () => import("@/pages/home.vue"),
+        name: "Landing",
+        component: () => import("@/pages/Home.vue"),
         meta: {
             public: false,
         },
@@ -21,8 +21,8 @@ const routes = [
     {
         path: "/admin",
         // name: "Home",
-        component: () => import("@/pages/admin/layout.vue"),
-        redirect: "/admin/home",
+        component: () => import("@/pages/admin/Layout.vue"),
+        redirect: "/admin/event",
         meta: {
             public: false,
         },
@@ -30,22 +30,37 @@ const routes = [
             {
                 path: "home",
                 name: "Home",
-                component: () => import("@/pages/admin/home.vue"),
+                component: () => import("@/pages/admin/Home.vue"),
+            },
+            {
+                path: "event",
+                name: "Event",
+                component: () => import("@/pages/admin/event/Index.vue"),
+            },
+            {
+                path: "event-make",
+                name: "Event Make",
+                component: () => import("@/pages/admin/event/Id.vue"),
+            },
+            {
+                path: "event/:id",
+                name: "Event Detail",
+                component: () => import("@/pages/admin/event/Id.vue"),
             },
             {
                 path: "post",
                 name: "Post",
-                component: () => import("@/pages/admin/post/index.vue"),
+                component: () => import("@/pages/admin/post/Index.vue"),
             },
             {
                 path: "post-make",
                 name: "Post Make",
-                component: () => import("@/pages/admin/post/id.vue"),
+                component: () => import("@/pages/admin/post/Id.vue"),
             },
             {
                 path: "post/:id",
                 name: "Post Detail",
-                component: () => import("@/pages/admin/post/id.vue"),
+                component: () => import("@/pages/admin/post/Id.vue"),
             },
         ],
     },

@@ -11,8 +11,8 @@ const auth = useAuth();
 const router = useRouter();
 const notif = useNotif();
 const formPost = ref({
-    username: "udeen_winter",
-    password: "udeenwinter_48",
+    username: "admin",
+    password: "admooners_48",
 });
 onMounted(() => {
     if (auth.token) {
@@ -31,7 +31,7 @@ async function login() {
 
         localStorage.setItem("token", data.token);
         auth.token = data.token;
-        router.push("/");
+        router.push("/admin");
         // location.reload();
     } catch (error) {
         console.log(error);
@@ -45,9 +45,9 @@ async function login() {
 }
 </script>
 <template>
-    <section class="bg-gray-50">
+    <section>
         <div
-            class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
+            class="flex flex-col items-center justify-center px-6 py-8 -mt-24 mx-auto md:h-screen lg:py-0"
         >
             <a
                 href="#"
@@ -135,11 +135,12 @@ async function login() {
                             class="text-sm font-light text-gray-500 dark:text-gray-400"
                         >
                             Don’t have an account yet?
-                            <a
-                                href="#"
+                            <RouterLink
+                                to="/register"
                                 class="font-medium text-primary hover:underline dark:text-primary"
-                                >Sign up</a
                             >
+                                Sign up
+                            </RouterLink>
                         </p> -->
                     </form>
                 </div>

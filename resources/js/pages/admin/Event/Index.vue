@@ -1,10 +1,11 @@
 <script setup>
 import { useMyFetch, jsonFormData } from "@/composables/fetch.js";
 import { dateFormatter } from "@/composables/timeFormatter.js";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useNotif } from "@/stores/notif.js";
 import Paginate from "@/components/Paginate.vue";
 import { useRouter, useRoute } from "vue-router";
+import Dropdown from "@/components/Dropdown.vue";
 
 const notif = useNotif();
 const search = ref("");
@@ -17,6 +18,8 @@ const list = ref([]);
 const meta = ref({
     links: [],
 });
+const filter = ref("");
+const filter_list = ["past", "present"];
 
 onMounted(() => {
     if (route.query.page) page.value = route.query.page;
@@ -30,7 +33,7 @@ async function getData() {
     try {
         const { data } = await useMyFetch(
             "GET",
-            `/post?page=${page.value}&search=${search.value}&limit=${limit}`
+            `/event?page=${page.value}&search=${search.value}&limit=${limit}&type=${filter.value}`
         );
         list.value = [...data.data];
         meta.value = data.meta;
@@ -39,12 +42,21 @@ async function getData() {
         notif.loading = false;
     }
 }
+watch(
+    () => filter.value,
+    (e) => {
+        getData();
+    }
+);
 
 async function deleteData(e) {
     let text = `Delete Data ${e.title} ?`;
     if (confirm(text) == true) {
         try {
-            const { data } = await useMyFetch("delete", `/post/${e.id}/delete`);
+            const { data } = await useMyFetch(
+                "delete",
+                `/event/${e.id}/delete`
+            );
             getData();
             notif.make("Succed Delete Data");
         } catch (e) {
@@ -56,34 +68,77 @@ async function deleteData(e) {
 
 function setPage(index) {
     page.value = index.url.split("=")[1];
-    router.push(`/admin/post?page=${page.value}`);
+    router.push(`/admin/home?page=${page.value}`);
     getData();
 }
 </script>
 <template>
     <div class="max-w-[1024px] mx-auto">
-        <div class="pb-4 flex justify-between relative text-xs lg:text-sm">
-            <form
-                @submit.prevent="setPage({ url: '?=1' })"
-                class="relative grow mr-4"
-            >
-                <input
-                    type="text"
-                    placeholder="Search.... "
-                    v-model="search"
-                    ref="input_search"
-                    class="w-full bg-white border border-gray-200 py-4 px-6 pr-24 rounded-xl focus:outline-none"
-                />
-                <div class="absolute right-2 top-2 flex items-center">
-                    <span
-                        v-if="search"
-                        class="mr-2 cursor-pointer"
-                        @click="
-                            () => {
-                                search = '';
-                                input_search.focus();
-                            }
-                        "
+        <div class="grid grid-cols-1 items-center lg:grid-cols-3">
+            <div>
+                <Dropdown v-model="filter" :list="filter_list" />
+            </div>
+            <div></div>
+            <div class="pb-4 flex justify-between relative text-xs lg:text-sm">
+                <form
+                    @submit.prevent="setPage({ url: '?=1' })"
+                    class="relative grow mr-4"
+                >
+                    <input
+                        type="text"
+                        placeholder="Search.... "
+                        v-model="search"
+                        ref="input_search"
+                        class="w-full bg-white border border-gray-200 py-4 px-6 pr-24 rounded-xl focus:outline-none"
+                    />
+                    <div class="absolute right-2 top-2 flex items-center">
+                        <span
+                            v-if="search"
+                            class="mr-2 cursor-pointer"
+                            @click="
+                                () => {
+                                    search = '';
+                                    input_search.focus();
+                                }
+                            "
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                class="w-4 h-4"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
+                            </svg>
+                        </span>
+                        <button class="btn-square">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                class="w-5 h-5"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                                />
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+                <div class="pt-2">
+                    <button
+                        @click="$router.push(`/admin/event-make?type=add`)"
+                        class="btn-square"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -91,68 +146,34 @@ function setPage(index) {
                             viewBox="0 0 24 24"
                             stroke-width="1.5"
                             stroke="currentColor"
-                            class="w-4 h-4"
+                            class="w-6 h-6"
                         >
                             <path
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
-                                d="M6 18L18 6M6 6l12 12"
-                            />
-                        </svg>
-                    </span>
-                    <button class="btn-square">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.5"
-                            stroke="currentColor"
-                            class="w-5 h-5"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                                d="M12 6v12m6-6H6"
                             />
                         </svg>
                     </button>
                 </div>
-            </form>
-            <div class="pt-2">
-                <button
-                    @click="$router.push(`/admin/post-make?type=add`)"
-                    class="btn-square"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="w-6 h-6"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M12 6v12m6-6H6"
-                        />
-                    </svg>
-                </button>
             </div>
         </div>
         <div
             class="bg-white border border-gray-200 rounded-xl shadow-xl p-4 lg:px-8 pb-8"
         >
-            <div class="overflow-auto">
+            <div class="overflow-auto text-sm">
                 <div class="mt-4">
                     <table class="table-auto w-full">
                         <thead>
                             <tr class="table-head">
                                 <th>No.</th>
                                 <th>Title</th>
-                                <th>Content</th>
-                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Location</th>
+                                <th>Slot</th>
+                                <!-- <th>User Book</th> -->
                                 <th>Time</th>
+                                <!-- <th>Created At</th> -->
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -167,22 +188,49 @@ function setPage(index) {
                                 </td>
                                 <td>{{ index.title }}</td>
                                 <td>
-                                    {{ index.content.substring(0, 20) + "..." }}
-                                </td>
-                                <td>
                                     {{
-                                        dateFormatter(index.created_at).split(
-                                            ","
-                                        )[0]
+                                        index.description.substring(0, 15) +
+                                        "..."
                                     }}
                                 </td>
                                 <td>
                                     {{
-                                        dateFormatter(index.created_at).split(
-                                            ","
-                                        )[1]
+                                        index.location.substring(0, 15) + "..."
                                     }}
                                 </td>
+                                <td>
+                                    <span
+                                        :class="
+                                            index.booking == index.slot
+                                                ? 'font-bold text-rose-600'
+                                                : 'text-lime-600'
+                                        "
+                                        class="text-xs"
+                                    >
+                                        {{ index.booking }}/{{ index.slot }}
+                                    </span>
+                                </td>
+                                <!-- <td></td> -->
+                                <td>
+                                    {{
+                                        dateFormatter(index.time).split(",")[0]
+                                    }}
+                                    {{
+                                        dateFormatter(index.time).split(",")[1]
+                                    }}
+                                </td>
+                                <!-- <td>
+                                {{
+                                    dateFormatter(index.created_at).split(
+                                        ","
+                                    )[0]
+                                }}
+                                {{
+                                    dateFormatter(index.created_at).split(
+                                        ","
+                                    )[1]
+                                }}
+                            </td> -->
                                 <td>
                                     <div class="flex items-center">
                                         <svg
@@ -193,7 +241,7 @@ function setPage(index) {
                                             stroke="currentColor"
                                             @click="
                                                 $router.push(
-                                                    `/admin/post/${index.id}`
+                                                    `/admin/event/${index.id}`
                                                 )
                                             "
                                             class="w-5 mr-2 text-primary cursor-pointer hover:text-primary/50 ease-in-out duration-200"
@@ -211,7 +259,7 @@ function setPage(index) {
                                             viewBox="0 0 24 24"
                                             @click="
                                                 $router.push(
-                                                    `/admin/post/${index.id}?type=edit`
+                                                    `/admin/event/${index.id}?type=edit`
                                                 )
                                             "
                                             stroke-width="1.5"

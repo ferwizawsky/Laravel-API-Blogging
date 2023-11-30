@@ -41,7 +41,6 @@ export const jsonFormData = (json, exceptional = []) => {
                             }
                         }
                     } else {
-                        console.log(json[x][y]);
                         fm.append(`${x}[${y}]`, json[x][y]);
                     }
                 }

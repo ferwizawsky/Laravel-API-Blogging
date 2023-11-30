@@ -26,6 +26,10 @@
     @apply bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:outline-none focus:ring-primary focus:border-primary block w-full p-2.5;
   }
 
+.nav-link {
+  @apply mr-6 text-sm hover:text-primary;
+}
+
 .card {
     @apply bg-black/50 backdrop-blur-sm rounded-lg p-4 text-center;
 }

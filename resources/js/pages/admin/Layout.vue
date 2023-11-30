@@ -8,6 +8,17 @@ import { useRouter } from "vue-router";
 const item = ref();
 const auth = useAuth();
 const router = useRouter();
+const navbar = [
+    {
+        text: "Event",
+        to: "/admin/event",
+    },
+    {
+        text: "Booking",
+        to: "/admin/post",
+    },
+];
+
 async function getUser() {
     item.value = {};
     try {
@@ -38,44 +49,54 @@ onMounted(() => {
             class="w-full bg-white/20 backdrop-blur-sm fixed top-0 z-10 left-0 min-h-[65px] flex items-center justify-between px-4 lg:px-8"
         >
             <div></div>
-            <Menu as="div" class="relative inline-block text-left">
-                <div>
-                    <MenuButton
-                        class="w-8 h-8 cursor-pointer bg-secondary flex items-center justify-center rounded-full text-white"
+            <div class="flex items-center">
+                <span v-for="index in navbar">
+                    <RouterLink
+                        :class="$route.path == index.to ? 'font-semibold' : ''"
+                        class="nav-link"
+                        :to="index.to"
+                        >{{ index.text }}</RouterLink
                     >
-                        {{ item?.name?.substring(0, 1) }}
-                    </MenuButton>
-                </div>
+                </span>
+                <Menu as="div" class="relative inline-block text-left">
+                    <div>
+                        <MenuButton
+                            class="w-8 h-8 cursor-pointer bg-secondary flex items-center justify-center rounded-full text-white"
+                        >
+                            {{ item?.name?.substring(0, 1) }}
+                        </MenuButton>
+                    </div>
 
-                <transition
-                    enter-active-class="transition duration-100 ease-out"
-                    enter-from-class="transform scale-95 opacity-0"
-                    enter-to-class="transform scale-100 opacity-100"
-                    leave-active-class="transition duration-75 ease-in"
-                    leave-from-class="transform scale-100 opacity-100"
-                    leave-to-class="transform scale-95 opacity-0"
-                >
-                    <MenuItems
-                        class="absolute border border-gray-200 right-0 mt-2 w-32 origin-top-right rounded-md bg-white shadow-lg focus:outline-none"
+                    <transition
+                        enter-active-class="transition duration-100 ease-out"
+                        enter-from-class="transform scale-95 opacity-0"
+                        enter-to-class="transform scale-100 opacity-100"
+                        leave-active-class="transition duration-75 ease-in"
+                        leave-from-class="transform scale-100 opacity-100"
+                        leave-to-class="transform scale-95 opacity-0"
                     >
-                        <div class="px-1 py-1">
-                            <MenuItem v-slot="{ active }">
-                                <button
-                                    @click="logout()"
-                                    :class="[
-                                        active
-                                            ? 'bg-primary text-white'
-                                            : 'text-gray-900',
-                                        'group flex w-full items-center rounded-md px-2 py-2 text-sm',
-                                    ]"
-                                >
-                                    Logout
-                                </button>
-                            </MenuItem>
-                        </div>
-                    </MenuItems>
-                </transition>
-            </Menu>
+                        <MenuItems
+                            class="absolute border border-gray-200 right-0 mt-2 w-32 origin-top-right rounded-md bg-white shadow-lg focus:outline-none"
+                        >
+                            <div class="px-1 py-1">
+                                <MenuItem v-slot="{ active }">
+                                    <button
+                                        @click="logout()"
+                                        :class="[
+                                            active
+                                                ? 'bg-primary text-white'
+                                                : 'text-gray-900',
+                                            'group flex w-full items-center rounded-md px-2 py-2 text-sm',
+                                        ]"
+                                    >
+                                        Logout
+                                    </button>
+                                </MenuItem>
+                            </div>
+                        </MenuItems>
+                    </transition>
+                </Menu>
+            </div>
         </div>
         <div class="pt-[85px] px-4 lg:px-8 pb-20">
             <RouterView />
