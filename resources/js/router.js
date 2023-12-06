@@ -13,6 +13,7 @@ const routes = [
     {
         path: "/",
         name: "Landing",
+        redirect: "/admin/event",
         component: () => import("@/pages/Home.vue"),
         meta: {
             public: false,
