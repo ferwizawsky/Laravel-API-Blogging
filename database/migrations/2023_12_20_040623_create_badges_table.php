@@ -11,17 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('posts', function (Blueprint $table) {
+        Schema::create('badges', function (Blueprint $table) {
             $table->bigIncrements("id");
-            $table->text("title");
-            $table->text("content")->nullable();
-            $table->text("tag")->nullable();
-            $table->integer("status")->nullable();
-            $table->text("picture")->nullable();
-
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-
+            $table->text('name');
+            $table->text('desc')->default("Description About Badge.");
+            $table->text('img')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -32,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('posts');
+        Schema::dropIfExists('badges');
     }
 };
