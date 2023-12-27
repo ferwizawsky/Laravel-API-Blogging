@@ -10,6 +10,10 @@ const auth = useAuth();
 const router = useRouter();
 const navbar = [
     {
+        text: "Home",
+        to: "/admin/home",
+    },
+    {
         text: "Event",
         to: "/admin/event",
     },
