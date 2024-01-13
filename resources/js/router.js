@@ -12,7 +12,7 @@ const routes = [
     },
     {
         path: "/",
-        // name: "Landing",
+        name: "Point User",
         component: () => import("@/pages/home.vue"),
         meta: {
             public: false,
