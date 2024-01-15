@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CommentResource extends JsonResource
+class AbsensiResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,14 +16,13 @@ class CommentResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "content" => $this->content,
             "user" => [
-                "id" => $this->user?->id,
+                "username" =>  $this->user?->username,
                 "name" => $this->user?->name,
-                "username" => $this->user?->username,
             ],
-            "created_at" => $this->created_at,
-
+            "status" => $this->kelas?->min >  $this->total ? "Belum Cukup" : "Cukup",
+            "total" => $this->total,
+            "created_at" => $this->created_at
         ];
     }
 }

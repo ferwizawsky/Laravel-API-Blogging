@@ -21,7 +21,9 @@ class AuthController extends Controller
         if (!$log) {
             return response()->json(['message' => 'Please Check again your username or password!'], 401);
         }
-        $user = User::where('username', $request->username)->orWhere('email', $request->username)->first();
+        $user = User::where('username', $request->username)
+            // ->orWhere('email', $request->username)
+            ->first();
         // $request->user()->tokens()->delete();
         $token = $user->createToken('web-blog-token')->plainTextToken;
         return response()->json(['user' => new UserResource($user), 'token' => $token], 200);
@@ -32,21 +34,25 @@ class AuthController extends Controller
         $credentials = $request->validate([
             'name' => 'required',
             'username' => 'required',
-            'email' => 'required',
             'password' => 'required',
         ]);
-        if (User::where('username', $request->username)->orWhere('email', $request->username)->first())
+        if (User::where('username', $request->username)
+            // ->orWhere('email', $request->username)
+            ->first()
+        )
             return response()->json(['message' => 'Username or email already exist!'], 409);
         $data = User::create([
             'name' => $request->name,
             'username' => $request->username,
-            'email' => $request->email,
+            // 'email' => $request->email,
             'password' => Hash::make($request->password),
             'role_id' => 0,
         ]);
         if (!$data)  return response()->json(['message' => 'Failed to register account!'], 401);
 
-        $user = User::where('username', $request->username)->orWhere('email', $request->username)->first();
+        $user = User::where('username', $request->username)
+            // ->orWhere('email', $request->username)
+            ->first();
         $token = $user->createToken('web-blog-token')->plainTextToken;
         return response()->json(['user' => new UserResource($user), 'token' => $token], 200);
     }

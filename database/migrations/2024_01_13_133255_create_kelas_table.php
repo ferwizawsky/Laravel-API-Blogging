@@ -11,17 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('posts', function (Blueprint $table) {
+        Schema::create('kelas', function (Blueprint $table) {
             $table->bigIncrements("id");
             $table->text("title");
-            $table->text("content")->nullable();
-            $table->text("tag")->nullable();
-            $table->integer("status")->nullable();
-            $table->text("picture")->nullable();
-
+            $table->text("code");
+            $table->integer("isUnactive")->default(0);
+            $table->text("day")->nullable();
+            $table->integer("min")->nullable();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-
             $table->timestamps();
             $table->softDeletes();
         });
@@ -32,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('posts');
+        Schema::dropIfExists('kelas');
     }
 };

@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Faker\Factory as Faker;
 
 class UserSeeder extends Seeder
 {
@@ -18,9 +19,18 @@ class UserSeeder extends Seeder
             User::create([
                 'name' =>  $item['nama'],
                 'username' => $item['username'],
-                'email' => $item['email'],
+                // 'email' => $item['email'],
                 'password' => Hash::make($item['password']),
                 'role_id' => $item['role_id'],
+            ]);
+        }
+        $faker = Faker::create('id_ID');
+        foreach (range(1, 35) as $index) {
+            User::create([
+                'username' => $faker->unique()->numberBetween(10000000, 99999999),
+                'password' => Hash::make("password123"),
+                'name' => $faker->name,
+                'role_id' => 0,
             ]);
         }
     }
@@ -30,15 +40,25 @@ class UserSeeder extends Seeder
             [
                 'nama' => 'Admoon',
                 'username' => 'admin',
-                'email' => 'admin@fioep.com',
                 'password' => 'admooners_48',
+                'role_id' => 2,
+            ],
+            [
+                'nama' => 'Dosen Trial',
+                'username' => 'dosen1',
+                'password' => 'dosen1',
                 'role_id' => 1,
             ],
             [
                 'nama' => 'Udeen Winter',
                 'username' => 'udeen_winter',
-                'email' => 'refeanine@gmail.com',
                 'password' => 'udeenwinter_48',
+                'role_id' => 0,
+            ],
+            [
+                'nama' => 'Wela Winter',
+                'username' => 'wela_winter',
+                'password' => 'welawinter_48',
                 'role_id' => 0,
             ],
         ];

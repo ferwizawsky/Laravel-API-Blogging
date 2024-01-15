@@ -1,8 +1,14 @@
 <?php
 
+use App\Http\Controllers\AbsensiController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\JadwalController;
+use App\Http\Controllers\KelasController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ReactionController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,23 +34,46 @@ Route::middleware("auth:sanctum")->group(function () {
         Route::get('/logout', 'logout');
     });
 
-    Route::prefix('post')->controller(PostController::class)->group(function () {
-        // Route::get('/', 'index');
-        Route::post('/', "store");
-        // Route::get('/{id}', "get");
-        Route::post('/{id}', "edit");
-        Route::delete('/{id}/delete', 'destroy');
+
+    Route::prefix('student')->controller(StudentController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::get('/jadwal', 'jadwal');
     });
 
-    Route::prefix('comment')->controller(CommentController::class)->group(function () {
+    Route::prefix('kelas')->controller(KelasController::class)->group(function () {
         Route::get('/', 'index');
         Route::post('/', "store");
-        Route::post('/{id}', "edit");
+        Route::get('/{id}', "get");
+        Route::post('/{id}/update', "edit");
         Route::delete('/{id}/delete', 'destroy');
     });
 
 
-    Route::prefix('reaction')->controller(ReactionController::class)->group(function () {
+    Route::prefix('jadwal')
+        // ->middleware("role:1")
+        ->controller(JadwalController::class)->group(function () {
+            Route::get('/', 'index');
+            Route::post('/', "store");
+            Route::get('/{id}', "get");
+            Route::post('/{id}/update', "edit");
+            Route::delete('/{id}/delete', 'destroy');
+        });
+
+    Route::prefix('user')->middleware("role:2")->controller(UserController::class)->group(function () {
+        Route::get('/', 'index');
         Route::post('/', "store");
+        Route::get('/{id}', "get");
+        Route::post('/{id}/update', "edit");
+        Route::delete('/{id}/delete', 'destroy');
+    });
+
+    Route::prefix('absen')->middleware("role:2")->controller(AbsensiController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::get('/detail', 'indexDetail');
+
+        // Route::get('/{id}/detail', "get");
+        Route::post('/', "store");
+        // Route::post('/{id}/update', "edit");
+        Route::delete('/{id}/delete', 'destroy');
     });
 });
