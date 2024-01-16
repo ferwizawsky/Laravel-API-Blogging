@@ -32,15 +32,32 @@ class StudentController extends Controller
         ]);
     }
 
+    public function kelas(Request $request)
+    {
+
+        // $groupedData = Kelas::with(['students' => function ($query) use ($request) {
+        //     $query->where("user_id", $request->user()?->id);
+        // }])->get();
+        $groupedData = Kelas::paginate($request->limit ?? 4);
+        // return $groupedData;
+        return KelasResource::collection($groupedData);
+    }
+
     public function jadwal(Request $request)
     {
         $today = Carbon::now()->toDateString();
 
         // Query the model for records where the date is today or in the future
         // $futureRecords = YourModel::whereDate('your_date_column', '>=', $today)->get();
+        $user_id = $request->user()?->id;
+        $results = JadwalUjian::whereDate('day', '>=', $today)->whereHas('kelas', function ($query) use ($user_id) {
+            $query->whereHas('students', function ($query) use ($user_id) {
+                $query->where('user_id', 'like', "%{$user_id}%");
+            });
+        });
 
-        $results = JadwalUjian::whereDate('day', '>=', $today);
-        $results = $results->where('user_id', $request->user()?->user_id);
+        // return (JadwalUjian::first()->kelas->students);
+        // $results = $results->where('user_id', $request->user()?->user_id);
         $results = $results->get();
         return  JadwalUjianResource::collection($results);
     }

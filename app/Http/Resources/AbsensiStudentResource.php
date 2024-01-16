@@ -16,17 +16,17 @@ class AbsensiStudentResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "user" => [
-                "username" =>  $this->user?->username,
-                "name" => $this->user?->name,
-            ],
+            // "user" => [
+            //     "username" =>  $this->user?->username,
+            //     "name" => $this->user?->name,
+            // ],
             "kelas" => [
                 "id" => $this->kelas?->id,
                 "title" => $this->kelas?->title,
                 "author" =>
                 [
-                    "username" =>  $this->user?->username,
-                    "name" => $this->user?->name,
+                    "username" =>  $this->kelas?->author?->username,
+                    "name" => $this->kelas?->author?->name,
                 ],
             ],
             "min" => $this->kelas?->min,

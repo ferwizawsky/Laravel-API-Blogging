@@ -37,6 +37,7 @@ Route::middleware("auth:sanctum")->group(function () {
 
     Route::prefix('student')->controller(StudentController::class)->group(function () {
         Route::get('/', 'index');
+        Route::get('/kelas', 'kelas');
         Route::get('/jadwal', 'jadwal');
     });
 
@@ -67,13 +68,15 @@ Route::middleware("auth:sanctum")->group(function () {
         Route::delete('/{id}/delete', 'destroy');
     });
 
-    Route::prefix('absen')->middleware("role:2")->controller(AbsensiController::class)->group(function () {
-        Route::get('/', 'index');
-        Route::get('/detail', 'indexDetail');
+    Route::prefix('absen')
+        // ->middleware("role:1")
+        ->controller(AbsensiController::class)->group(function () {
+            Route::get('/', 'index');
+            Route::get('/detail', 'indexDetail');
 
-        // Route::get('/{id}/detail', "get");
-        Route::post('/', "store");
-        // Route::post('/{id}/update', "edit");
-        Route::delete('/{id}/delete', 'destroy');
-    });
+            // Route::get('/{id}/detail', "get");
+            Route::post('/', "store");
+            // Route::post('/{id}/update', "edit");
+            Route::delete('/{id}/delete', 'destroy');
+        });
 });
