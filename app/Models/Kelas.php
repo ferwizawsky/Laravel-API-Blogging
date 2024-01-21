@@ -16,6 +16,12 @@ class Kelas extends Model
         return $this->hasMany(UserKelas::class);
     }
 
+    public function absensis()
+    {
+        return $this->hasMany(Absensi::class);
+    }
+
+
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');

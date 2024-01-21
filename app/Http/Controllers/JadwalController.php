@@ -29,7 +29,7 @@ class JadwalController extends Controller
                 $resultss = $results->where('user_id', $request->user_id);
             };
         } else {
-            $results = $results->where('user_id', $request->user()?->user_id);
+            $results = $results->where('user_id', $request->user()?->id);
         }
 
         if ($request->kelas_id) {
@@ -51,8 +51,8 @@ class JadwalController extends Controller
         ]);
 
         $data = JadwalUjian::create([
-            "day" => date('Y-m-d', strtotime('2024-01-15')),
-            "title" => "UAS",
+            "day" => date('Y-m-d', strtotime($request->day)),
+            "title" => $request->title,
             "kelas_id" => $request->kelas_id,
             "user_id" => $request->user()?->id ?? 2
         ]);
@@ -65,7 +65,9 @@ class JadwalController extends Controller
     public function edit(Request $request, $id)
     {
         $credentials = $request->validate([
-            "status" => "required",
+            'title' => 'required',
+            'day' => 'required|date',
+            'kelas_id' => "required"
         ]);
 
         $data = JadwalUjian::find($id);
@@ -75,13 +77,16 @@ class JadwalController extends Controller
             ], 404);
         }
 
-        if ($data->user_id != $request->user()?->id)
+        if ($data->user_id != $request->user()?->id && $request->user()?->role_id < 2)
             return response()->json([
                 "message" => "Jadwal Ujian not found!"
             ], 404);
 
         $data->update([
-            "status" => $request->status,
+            "day" => date('Y-m-d', strtotime($request->day)),
+            "title" => $request->title,
+            "kelas_id" => $request->kelas_id,
+            "user_id" => $request->user()?->id ?? 2
         ]);
 
         return response()->json([

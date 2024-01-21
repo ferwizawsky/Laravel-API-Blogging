@@ -23,8 +23,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/post/{id}',  'PostController@get');
-Route::get('/post',  'PostController@index');
+// Route::get('/post/{id}',  'PostController@get');
+// Route::get('/post',  'PostController@index');
 Route::post('/auth/register',  'AuthController@register');
 Route::post('/auth/login',  'AuthController@login');
 
@@ -38,20 +38,24 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::prefix('student')->controller(StudentController::class)->group(function () {
         Route::get('/', 'index');
         Route::get('/kelas', 'kelas');
+        Route::get('/detail', 'detail');
         Route::get('/jadwal', 'jadwal');
     });
 
-    Route::prefix('kelas')->controller(KelasController::class)->group(function () {
-        Route::get('/', 'index');
-        Route::post('/', "store");
-        Route::get('/{id}', "get");
-        Route::post('/{id}/update', "edit");
-        Route::delete('/{id}/delete', 'destroy');
-    });
+    Route::prefix('kelas')
+        ->middleware("role:1")
+        ->controller(KelasController::class)->group(function () {
+            Route::get('/', 'index');
+            Route::post('/', "store");
+            Route::get('/{id}', "get");
+            Route::post('/{id}/update', "edit");
+            Route::post('/{id}/remove', "remove");
+            Route::delete('/{id}/delete', 'destroy');
+        });
 
 
     Route::prefix('jadwal')
-        // ->middleware("role:1")
+        ->middleware("role:1")
         ->controller(JadwalController::class)->group(function () {
             Route::get('/', 'index');
             Route::post('/', "store");
@@ -69,13 +73,14 @@ Route::middleware("auth:sanctum")->group(function () {
     });
 
     Route::prefix('absen')
-        // ->middleware("role:1")
+        ->middleware("role:1")
         ->controller(AbsensiController::class)->group(function () {
             Route::get('/', 'index');
             Route::get('/detail', 'indexDetail');
 
             // Route::get('/{id}/detail', "get");
             Route::post('/', "store");
+            Route::post('/cukupkan', "cukupkan");
             // Route::post('/{id}/update', "edit");
             Route::delete('/{id}/delete', 'destroy');
         });

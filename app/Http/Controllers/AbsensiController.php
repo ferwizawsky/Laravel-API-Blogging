@@ -53,6 +53,7 @@ class AbsensiController extends Controller
     {
         $credentials = $request->validate([
             'user' => 'required|array',
+            'kelas_id' => 'required'
         ]);
 
         foreach ($request->user as $user) {
@@ -63,6 +64,37 @@ class AbsensiController extends Controller
             ]);
         }
 
+        return response()->json([
+            "message" => "Success",
+        ], 200);
+    }
+
+
+
+    public function cukupkan(Request $request)
+    {
+        $credentials = $request->validate([
+            'user' => 'required|array',
+            'kelas_id' => 'required'
+        ]);
+
+        $data = Kelas::with('absensis')->find($request->kelas_id);
+        if (!$data) {
+            return response()->json([
+                "message" => "Kelas not found!"
+            ], 404);
+        }
+        // $tmp = [];
+        foreach ($request->user as $user) {
+            $kali = $request->kali ?? $data->min - count($data->absensis->where('user_id', $user['id']));
+            for ($x = 0; $x < $kali; $x++) {
+                Absensi::create([
+                    "status" => $user['status'] ?? null,
+                    "kelas_id" => $request->kelas_id,
+                    "user_id" => $user['id'],
+                ]);
+            }
+        }
         return response()->json([
             "message" => "Success",
         ], 200);

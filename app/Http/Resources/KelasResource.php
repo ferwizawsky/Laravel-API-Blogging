@@ -17,6 +17,8 @@ class KelasResource extends JsonResource
         return [
             "id" => $this->id,
             "title" => $this->title,
+            "day" => $this->day,
+            "isUnactive" => $this->isUnactive,
             "min" => $this->min,
             "author" => [
                 "username" =>  $this->author?->username,
@@ -24,7 +26,6 @@ class KelasResource extends JsonResource
                 "role_id" => $this->author?->role_id,
             ],
             'students' => StudentResource::collection($this->students),
-
         ];
     }
 }

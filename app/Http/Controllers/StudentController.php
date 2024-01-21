@@ -23,7 +23,7 @@ class StudentController extends Controller
         $groupedData = Absensi::where("user_id", $request->user()?->id ?? 3)->selectRaw('*, COUNT(*) as total')
             ->groupBy('kelas_id', 'user_id')
             ->get();
-        $kelas = Kelas::find($request->user_id ?? 3);
+        // $kelas = Kelas::find($request->kelas_id ?? 3);
         // return $groupedData;
         return response()->json([
             // "kelas" => new KelasResource($kelas),
@@ -32,13 +32,27 @@ class StudentController extends Controller
         ]);
     }
 
+    public function detail(Request $request)
+    {
+        $groupedData = Absensi::where("kelas_id", $request->kelas_id ?? 3)->selectRaw('*, COUNT(*) as total')
+            ->groupBy('kelas_id', 'user_id')
+            ->get();
+        $kelas = Kelas::find($request->kelas_id ?? 3);
+        // return $groupedData;
+        return response()->json([
+            "kelas" => new KelasResource($kelas),
+            // "kelas" => $kelas,
+            "absensi" => AbsensiResource::collection($groupedData)
+        ]);
+    }
+
     public function kelas(Request $request)
     {
 
-        // $groupedData = Kelas::with(['students' => function ($query) use ($request) {
-        //     $query->where("user_id", $request->user()?->id);
-        // }])->get();
-        $groupedData = Kelas::paginate($request->limit ?? 4);
+        $groupedData = Kelas::with(['students' => function ($query) use ($request) {
+            $query->where("user_id", $request->user()?->id);
+        }])->get();
+        // $groupedData = Kelas::with('students')->paginate($request->limit ?? 4);
         // return $groupedData;
         return KelasResource::collection($groupedData);
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\KelasResource;
 use App\Models\Absensi;
 use App\Models\Kelas;
+use App\Models\UserKelas;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -26,13 +27,13 @@ class KelasController extends Controller
         //     $results = $results->where('status', $request->status);
         // }
 
-        if ($request->user()?->role_id > 1) {
-            if ($request->user_id) {
-                $results = $results->where('user_id', $request->user_id);
-            }
-        } else {
-            $results = $results->where('user_id', $request->user()?->user_id);
-        }
+        // if ($request->user()?->role_id > 1) {
+        //     if ($request->user_id) {
+        //         $results = $results->where('user_id', $request->user_id);
+        //     }
+        // } else {
+        //     $results = $results->where('user_id', $request->user()?->user_id);
+        // }
 
 
         if ($request->kelas_id) {
@@ -67,13 +68,20 @@ class KelasController extends Controller
             "title" => $request->title,
             "code" => $this->generateCode(2),
             "min" => $request->min ?? 0,
+            "day" => $request->day ?? "Senin",
+            "isUnactive" => $request->isUnactive ?? 0,
             "user_id" => $request->user()?->id ?? 2,
         ]);
 
-        return response()->json([
-            "message" => "Success",
-            "data" => $data
-        ], 200);
+        if ($request->students) {
+            foreach ($request->students as $student) {
+                UserKelas::create([
+                    "kelas_id" => $data->id,
+                    "user_id" => $student
+                ]);
+            }
+        }
+        return new KelasResource($data);
     }
 
     public function get($id)
@@ -91,6 +99,7 @@ class KelasController extends Controller
     {
         $credentials = $request->validate([
             "title" => "required",
+            "min" => "required"
         ]);
 
         $data = Kelas::find($id);
@@ -99,19 +108,46 @@ class KelasController extends Controller
                 "message" => "Kelas not found!"
             ], 404);
         }
-
         if ($data->user_id != $request->user()?->id)
             return response()->json([
                 "message" => "Kelas not found!"
             ], 404);
 
+        if ($request->students) {
+            foreach ($request->students as $student) {
+                if (!UserKelas::where("kelas_id", $id)->where('user_id', $student)->first()) {
+                    UserKelas::create([
+                        "kelas_id" => $id,
+                        "user_id" => $student
+                    ]);
+                }
+            }
+        }
         $data->update([
             "title" => $request->title,
             "min" => $request->min ?? 0,
+            "day" => $request->day ?? "Senin",
+            "isUnactive" => $request->isUnactive ?? 0,
         ]);
 
         return response()->json([
             "message" => "Success edit Kelas"
+        ]);
+    }
+
+
+    public function remove(Request $request, $id)
+    {
+        if ($request->students) {
+            foreach ($request->students as $student) {
+                $data = UserKelas::where("kelas_id", $id)->where('user_id', $student)->first();
+                if ($data) {
+                    $data->delete();
+                }
+            }
+        }
+        return response()->json([
+            "message" => "Success Delete Student from class"
         ]);
     }
 

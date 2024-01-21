@@ -18,6 +18,8 @@ class StudentViewResource extends JsonResource
             "id" => $this->id,
             "title" => $this->title,
             "min" => $this->min,
+            "day" => $this->day,
+            "isUnactive" => $this->isUnactive,
             "author" => [
                 "username" =>  $this->author?->username,
                 "name" => $this->author?->name,
