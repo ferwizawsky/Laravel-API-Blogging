@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\OrdersController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
+Route::resource('orders', OrdersController::class)->only(['index', 'show']);
 
 Route::get('/{any?}', function () {
     return view('welcome');
