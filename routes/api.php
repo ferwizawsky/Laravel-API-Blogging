@@ -45,6 +45,7 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::prefix('kelas')
         ->middleware("role:1")
         ->controller(KelasController::class)->group(function () {
+            Route::get('/student', 'student');
             Route::get('/', 'index');
             Route::post('/', "store");
             Route::get('/{id}', "get");

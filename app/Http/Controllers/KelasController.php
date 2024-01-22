@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\KelasResource;
+use App\Http\Resources\UserResource;
 use App\Models\Absensi;
 use App\Models\Kelas;
+use App\Models\User;
 use App\Models\UserKelas;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -15,6 +17,18 @@ class KelasController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+    public function student(Request $request)
+    {
+        $searchTerm = $request->search;
+        $data = User::where("role_id", "=", 0)
+            ->where(function ($query) use ($searchTerm) {
+                $query->where('username', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhere('name', 'LIKE', '%' . $searchTerm . '%');
+            })->orderBy('created_at', 'DESC')->paginate($request->limit  ?? 10);
+        return UserResource::collection($data);
+    }
+
     public function index(Request $request)
     {
         $search  = $request->search ?? null;
@@ -53,7 +67,7 @@ class KelasController extends Controller
         // }
 
         $results = $results
-            ->orderBy("created_at", "desc")
+            ->orderBy("created_at", "DESC")
             ->paginate($request->limit ?? 4);
         return KelasResource::collection($results);
     }

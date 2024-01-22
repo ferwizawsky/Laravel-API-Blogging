@@ -16,6 +16,7 @@ class UserController extends Controller
         return new UserResource($data);
     }
 
+
     public function index(Request $request)
     {
         $searchTerm = $request->search;
