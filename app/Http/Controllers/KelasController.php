@@ -73,6 +73,56 @@ class KelasController extends Controller
     }
 
 
+
+    public function indexOption(Request $request)
+    {
+        $search  = $request->search ?? null;
+        $results = Kelas::where('title', 'LIKE', '%' . $search . '%');
+
+        // if ($request->tag) {
+        //     $results = $results->where('tag', $request->tag);
+        // }
+        // if ($request->status) {
+        //     $results = $results->where('status', $request->status);
+        // }
+
+        // if ($request->user()?->role_id > 1) {
+        //     if ($request->user_id) {
+        //         $results = $results->where('user_id', $request->user_id);
+        //     }
+        // } else {
+        //     $results = $results->where('user_id', $request->user()?->user_id);
+        // }
+
+
+        if ($request->kelas_id) {
+            $results = $results->where('kelas_id', $request->kelas_id);
+        }
+        // if ($request->type == 'range') {
+        //     $results = $results->whereBetween('created_at', [$request->form, $request->to]);
+        // }
+        // if ($request->date) {
+        //     $results = $results->whereDate('created_at', '=', $request->date);
+        // }
+        // if ($request->month) {
+        //     $results = $results->whereMonth('created_at', '=', $request->month);
+        // }
+        // if ($request->year) {
+        //     $results = $results->whereYear('created_at', $request->year);
+        // }
+
+        $results = $results
+            ->orderBy("created_at", "DESC")
+            ->paginate($request->limit ?? 10);
+
+
+        return  response()->json([
+            "data" => $results
+        ]);
+    }
+
+
+
     public function store(Request $request)
     {
         $credentials = $request->validate([

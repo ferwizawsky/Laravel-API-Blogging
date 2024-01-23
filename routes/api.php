@@ -47,6 +47,7 @@ Route::middleware("auth:sanctum")->group(function () {
         ->controller(KelasController::class)->group(function () {
             Route::get('/student', 'student');
             Route::get('/', 'index');
+            Route::get('/option', 'indexOption');
             Route::post('/', "store");
             Route::get('/{id}', "get");
             Route::post('/{id}/update', "edit");

@@ -36,9 +36,11 @@ class JadwalController extends Controller
             $results = $results->where('kelas_id', $request->kelas_id);
         }
 
-        $results = $results->paginate($request->limit ?? 10);
+        $results = $results->orderBy("created_at", "DESC")->paginate($request->limit ?? 10);
         return  JadwalUjianResource::collection($results);
     }
+
+
 
 
 
