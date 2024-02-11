@@ -84,7 +84,7 @@ class UserController extends Controller
         return new UserResource($check);
     }
 
-    public function delete($id)
+    public function destroy($id)
     {
         $user = User::find($id);
         $user->delete();
